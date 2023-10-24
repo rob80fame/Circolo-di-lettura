@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circolo Di Lettura II ASc</title>
+  </head>
+  <body>
+    
+    <div id="detailedDesc" class="detailedDesclass">
+      <button type="button" class="btn-close" style="text-align: right" onclick="ChiudiDett()">X</button>
+      <p ><strong>Titolo:</strong> <i id="titoloe"> </i> </p>
+              <img width=200 height=300 alt="copertina" id="covert">
+              <p><strong>Autore della Recenzione:</strong><i id="autorerecenzione"> </i></p>
+              <p><strong>Generi:</strong><i id="genere"> </i></p>
+              <p><strong>Valutazione:</strong><i id="valutazione"> </i></p>
+              <p><strong>Descrizione:</strong><i id="descrizionee"></i></p>
+              <p><strong>Commento:</strong><i id="commento"></i></p>
+              <iframe src="" alt="trailer" id="trailer"></iframe>
+              <h3>Area Commenti</h3>
+              <p id="commentspace"></p>
+              <form id="myForm">
+                <div>
+                    <label for="name">Nome</label>
+                    <input type="text" name="name" id="name" style="font-family: sans-serif; font-size: 1.2em;">
+                </div>
+                <div>
+                    <label for="comment">Commento</label>
+                    <input type="text" name="comment" id="comment" style="font-family: sans-serif; font-size: 1.2em;">
+                </div>
+                <div>
+                    <label for="valutazione">Valutazione</label>
+                    <input type="number" name="valutazione" id="valutazioneUtente" min="1" max="5" style="font-family: sans-serif; font-size: 1.2em;">
+                </div>
+                <button id="bottone" type="button" >Invia Commento</button>
+                <p id="P-Id"></p>
+            </form>
+    </div>
+
+    <div class="topnav">
+        <h1>Circolo di Lettura II ASc</h1>
+        <a id="LoGin" href="">Aggiungi la tua scheda!</a>
+      </div>
+      <div class="cards-container">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+          let CANADD = false;
+          let LINK = "https://sheetlabs.com/.../....";
+          let IMAGEURL = "**********************************";
+          let FORMID =  "https://forms.gle/...";
+
+          
+          document.getElementsByTagName('body')[0].style.backgroundImage = 'url('+ "https://drive.google.com/uc?export=view&id=" + IMAGEURL +')';
+          document.getElementById("LoGin").href = FORMID;
+          document.getElementById("detailedDesc").style.visibility = "hidden";
+          if(CANADD == false){document.getElementById("LoGin").style.visibility = "hidden";}
+          function ChiudiDett(){document.getElementById("detailedDesc").style.visibility = "hidden";
+           document.body.style.overflow = 'auto';}
+    fetch(LINK)
+    .then(response => response.json())
+    .then(data => {
+      for (let i = 0; i < data.length; i++) {
+        let card = document.createElement('div');
+        card.classList.add('card');
+        let copertina = document.createElement('img');
+        let copurl = data[i].Copertina;
+        copertina.src = copurl.replace("https://drive.google.com/open?id=" , "https://drive.google.com/uc?export=view&id=");
+        copertina.width = 200;
+        copertina.height = 300;
+        card.appendChild(copertina);
+        let content = document.createElement('div');
+        content.classList.add('card-content');
+        let titolo = document.createElement('p');
+        titolo.textContent = data[i].Titolo;
+        content.appendChild(titolo);
+        let appartenenza = document.createElement('p');
+        appartenenza.textContent = data[i].Generi;
+        content.appendChild(appartenenza);
+        let valutazione = document.createElement('h3');
+        let numstelle = data[i].Valutazione;
+        let testostelle;
+        if(numstelle == 1){testostelle= "&#11088"}
+        if(numstelle == 2){testostelle= "&#11088 &#11088"}
+        if(numstelle == 3){testostelle= "&#11088 &#11088 &#11088"}
+        if(numstelle == 4){testostelle= "&#11088 &#11088 &#11088 &#11088"}
+        if(numstelle == 5){testostelle= "&#11088 &#11088 &#11088 &#11088 &#11088"}
+        valutazione.innerHTML = testostelle;
+        content.appendChild(valutazione);
+        let chi = document.createElement('p');
+        let chit = data[i].Chi;
+        chi.textContent = `Chi: ${chit}`;
+        content.appendChild(chi);
+        let descrizione = document.createElement('p');
+        let descrizionefull = data[i].Descrizione;
+        descrizione.textContent = `Descrizione: ${descrizionefull.substring(0, 50) + "..."}`;
+        content.appendChild(descrizione);
+        let commento = document.createElement('p');
+        let commentofull = data[i].Commento;
+        commento.textContent = `Commento: ${commentofull.substring(0, 50) + "..."}`;
+        content.appendChild(commento);
+        let trailer = document.createElement('iframe');
+        let trailerurl = data[i].Booktrailer;
+        trailer.src = trailerurl.replace("https://drive.google.com/open?id=","https://drive.google.com/file/d/") + "/preview";
+        trailer.width = 200;
+        trailer.height = 100;
+        content.appendChild(trailer);
+        let plus = document.createElement("button");
+        plus.width = 50;
+        plus.height = 100;
+        plus.textContent = "Vedi di Più";
+        plus.className = "plus-button";
+        plus.onclick = showPopup;
+        content.appendChild(plus);
+        let jsonDatai = data[i].Commenti;
+        const jsonData = JSON.parse(jsonDatai);
+        let Commenttxt = "";
+        jsonData.comments.forEach(comment => {
+        let Stelle;
+        let Valutazione = comment.ValutazioneBooktrailer;
+        if(Valutazione == 1){Stelle= "⭐"}
+        if(Valutazione == 2){Stelle= "⭐ ⭐"}
+        if(Valutazione == 3){Stelle= "⭐ ⭐ ⭐"}
+        if(Valutazione == 4){Stelle= "⭐ ⭐ ⭐ ⭐"}
+        if(Valutazione == 5){Stelle= "⭐ ⭐ ⭐ ⭐ ⭐"}
+        Commenttxt += comment.Nome + "(" + Stelle + ")" + ": " + comment.Commento + "<br>";
+        }); 
+        let Commenti = document.createElement('p');
+        Commenti.textContent = "Clicca più per vedere i Commenti";
+        content.appendChild(Commenti);
+        let commenttxte = Commenttxt;
+        let ID = data[i].__id;
+        card.appendChild(content);
+        let container = document.querySelector('.cards-container');	
+        container.style.textAlign = 'center';	
+        container.appendChild(card);
+        function showPopup(){
+        document.getElementById("detailedDesc").style.visibility = "visible";
+        document.getElementById("titoloe").textContent =data[i].Titolo;
+        document.getElementById("covert").src = copurl.replace("https://drive.google.com/open?id=" , "https://drive.google.com/uc?export=view&id=");;
+        document.getElementById("autorerecenzione").textContent = data[i].Chi;
+        document.getElementById("genere").textContent = data[i].Generi;
+        document.getElementById("valutazione").innerHTML = testostelle;
+        document.getElementById("descrizionee").textContent = data[i].Descrizione;
+        document.getElementById("commento").textContent = data[i].Commento;
+        document.getElementById("trailer").src = trailerurl.replace("https://drive.google.com/open?id=","https://drive.google.com/file/d/") + "/preview";
+        document.getElementById("commentspace").innerHTML = commenttxte;//.replaceAll(";", "⏎");
+        if(commenttxte == 0){document.getElementById("commentspace").innerHTML = "Come è vuoto qui! 🙀";}
+        document.getElementById("P-Id").textContent =  data[i].__id;
+        document.body.style.overflow = 'hidden';}
+        document.getElementById("bottone").addEventListener("click", InviaCommento);
+        function InviaCommento() {
+        let Nomee = document.getElementById("name").value;
+        let Commente = document.getElementById("comment").value;
+        let Valutazionee = document.getElementById("valutazioneUtente").value;
+        if (Nomee.length == 0 || Commente.length == 0) {
+        Swal.fire( "Oops" ,  "Nome o commento vuoto" ,  "error" );
+        return;}
+        else{TuCommenta();}
+        function TuCommenta() {
+        var newData = {
+          "Nome": Nomee,
+          "Commento": Commente,
+          "ValutazioneBooktrailer": Valutazionee
+        };
+        jsonData.comments.push(newData);
+        let datar = [
+        {
+        __id: document.getElementById("P-Id").textContent,
+        Commenti: JSON.stringify(jsonData)
+        }
+        ];
+        fetch(LINK, {
+        method: 'PATCH',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datar),
+        })
+        .then(response => {
+        if (response.status === 204) {
+        console.log('Success!');
+        Swal.fire("", "Commento mandato con successo", "success");
+        location.reload();
+        } else {
+        throw new Error('Something went wrong on api server!');
+        Swal.fire("Oops", "Qualcosa è andato storto nel server!", "error");
+        }});}}}});
+        </script>
+      </div>
+    <style>
+      .detailedDesclass{
+        position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #eeeeee;
+            overflow: auto;
+      }
+      .plus-button{
+        align-items: center;
+        background-color: #746e6e;
+        color: #fafafa;
+        cursor: pointer;
+        display: inline-flex;
+        flex: 1 1 auto;
+        font-family: Inter,sans-serif;
+        font-weight: 400;
+        justify-content: center;
+        line-height: 1;
+        margin: 0;
+        text-align: center;
+        white-space: nowrap;
+        border: 0;
+      }
+.topnav {
+  background-color: #faa57d;
+  overflow: hidden;
+}
+.topnav a {
+  float: right;
+  color: #ffffff;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.topnav h1 {
+    float: left;
+    color: #ffffff;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 19px;
+    }
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+.topnav a.active {
+  background-color: #00b8cd;
+  color: white;
+}
+.testo h1{
+      text-align: center;
+    }
+    body{
+      background-size: cover;
+      background-position: center;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo img {max-height: 100px;}
+    .title {font-size: 24px;}
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 20px;
+    }
+    .grid-item {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      
+    }
+    .grid-item h2 {
+      font-size: 24px;
+      margin-top: 0;
+    }
+    .grid-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    @media only screen and (min-width: 768px) {
+      .cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      .card {
+        width: calc(33.33% - 10px);
+        margin-bottom: 20px;
+      }
+    }
+    @media only screen and (max-width: 767px) {
+      .cards-container {
+        display: block;
+      }
+      .card {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+    .cards-container .card:nth-child(odd) {
+      background-color: #f1f1f1a4;
+    }
+    .cards-container .card:nth-child(even) {
+      background-color: #f9f9f975;
+    }
+    .btn-close{
+        align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 18px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: pointer;
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  height: 35px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: normal;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform,opacity;
+  z-index: 0;
+}
+    </style>
+  </body>
+</html> 
